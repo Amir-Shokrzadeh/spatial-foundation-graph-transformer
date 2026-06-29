@@ -1,4 +1,4 @@
-# Spatial Foundation Graph Transformer
+# Spatial Graph Transformer for Spatial Transcriptomics Representation Learning
 ### Learning Spatial Tissue Representations via Graph Transformers on Visium Breast Cancer Data
 
 ---

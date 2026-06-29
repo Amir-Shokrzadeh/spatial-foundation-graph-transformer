@@ -1,0 +1,146 @@
+# =============================================================
+# configs/default.yaml
+# Master configuration for Spatial Foundation Graph Transformer
+# All paths relative to project root unless otherwise noted.
+# =============================================================
+
+# ── Reproducibility ──────────────────────────────────────────
+seed: 42
+
+# ── Paths ────────────────────────────────────────────────────
+paths:
+  data_raw:        "data/raw"
+  data_processed:  "data/processed"
+  data_embeddings: "data/embeddings"
+  outputs:         "outputs"
+  figures:         "figures"
+  checkpoints:     "outputs/checkpoints"
+  logs:            "outputs/logs"
+  metrics:         "outputs/metrics"
+
+# ── Dataset ──────────────────────────────────────────────────
+dataset:
+  name:       "10x_visium_breast_cancer"
+  source:     "10x_genomics"          # loader key
+  # Local path after manual download (relative to data/raw/)
+  local_path: "visium_breast_cancer"
+  # 10x download URL (fill in after verifying the current public link)
+  download_url: null
+
+# ── Quality Control ──────────────────────────────────────────
+qc:
+  min_counts:      500     # minimum total counts per spot
+  max_counts:      50000   # flag likely doublets
+  min_genes:       200     # minimum detected genes per spot
+  max_pct_mt:      20      # maximum mitochondrial percentage (%)
+  min_cells:       5       # minimum spots a gene must appear in
+
+# ── Preprocessing ────────────────────────────────────────────
+preprocessing:
+  normalize_total:  10000   # target sum for sc.pp.normalize_total
+  log1p:            true
+  n_hvgs:           3000    # highly variable genes to retain
+  n_pca_components: 50      # PCA dimensionality
+
+# ── Embeddings ───────────────────────────────────────────────
+embeddings:
+  provider:   "pca"          # "pca" | "scgpt" | "geneformer" | "uce"
+  pca:
+    n_components: 50
+  scgpt:
+    model_dir:   "data/raw/scgpt_weights"
+    gene_col:    "gene_name"
+    batch_size:  32
+    device:      "cpu"       # "cuda" if GPU available
+  geneformer:
+    model_name:  "ctheodoris/Geneformer"
+    batch_size:  8
+    device:      "cpu"
+  uce:
+    model_path:  null        # fill if weights downloaded
+
+# ── Spatial Graph ────────────────────────────────────────────
+graph:
+  method:         "knn"      # "knn" | "delaunay" | "radius"
+  k_neighbors:    6          # for knn
+  radius:         null       # for radius-based (in spatial units)
+  use_weights:    true       # weight edges by inverse spatial distance
+  add_self_loops: false
+
+# ── Models ───────────────────────────────────────────────────
+models:
+  # Shared settings
+  input_dim:    50           # matches embedding dim
+  hidden_dim:   128
+  output_dim:   32           # latent representation size
+  dropout:      0.1
+
+  mlp:
+    n_layers:   3
+    activation: "relu"
+
+  gcn:
+    n_layers:   3
+
+  graphsage:
+    n_layers:   3
+    aggr:       "mean"       # "mean" | "max" | "lstm"
+
+  graph_transformer:
+    n_layers:    4
+    n_heads:     8
+    ffn_dim:     256
+    attn_dropout: 0.1
+    edge_dim:    null        # set to 1 to use edge weights
+
+# ── Training ─────────────────────────────────────────────────
+training:
+  mode:         "unsupervised"   # "supervised" | "unsupervised"
+  loss:         "contrastive"    # "contrastive" | "ce" (cross-entropy)
+  optimizer:    "adamw"
+  lr:           1.0e-3
+  weight_decay: 1.0e-4
+  epochs:       200
+  patience:     20               # early stopping patience
+  batch_size:   null             # null = full-graph (transductive)
+  val_fraction: 0.1
+  contrastive:
+    temperature:        0.07
+    augment_drop_feat:  0.1      # node feature masking probability
+    augment_drop_edge:  0.1      # edge dropout probability
+    n_views:            2
+
+# ── Clustering (for unsupervised eval) ───────────────────────
+clustering:
+  method:       "leiden"         # "leiden" | "louvain" | "kmeans"
+  resolution:   0.5              # leiden resolution
+  n_clusters:   null             # override for kmeans
+
+# ── Evaluation ───────────────────────────────────────────────
+evaluation:
+  metrics:
+    - "ari"
+    - "nmi"
+    - "silhouette"
+    - "neighborhood_preservation"
+  n_neighbors_preservation: 15   # for neighborhood preservation metric
+
+# ── UMAP ─────────────────────────────────────────────────────
+umap:
+  n_neighbors:  15
+  min_dist:     0.3
+  n_components: 2
+  metric:       "cosine"
+
+# ── Logging ──────────────────────────────────────────────────
+logging:
+  level:        "INFO"
+  log_every_n:  10              # log training loss every N epochs
+  save_model_every_n: 50        # checkpoint every N epochs
+
+# ── Figure Style ─────────────────────────────────────────────
+figures:
+  dpi:         200
+  format:      "png"            # "png" | "pdf" | "svg"
+  style:       "publication"    # maps to a matplotlib style sheet
+  colormap:    "tab20"

@@ -1,0 +1,53 @@
+# ── Python ───────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Environments ────────────────────────────────────────────
+.env
+.venv/
+venv/
+env/
+
+# ── Jupyter ──────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb_meta
+
+# ── Data & model weights (never commit large binaries) ───────
+data/raw/*
+data/processed/*
+data/embeddings/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/embeddings/.gitkeep
+
+# ── Outputs ──────────────────────────────────────────────────
+outputs/checkpoints/*
+outputs/logs/*
+outputs/metrics/*
+!outputs/checkpoints/.gitkeep
+!outputs/logs/.gitkeep
+!outputs/metrics/.gitkeep
+
+# ── Figures (regenerate with scripts) ────────────────────────
+figures/**/*
+!figures/**/.gitkeep
+
+# ── OS ───────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── IDE ──────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Type stubs & cache ───────────────────────────────────────
+.mypy_cache/
+.pytest_cache/

@@ -1,0 +1,50 @@
+# ============================================================
+# requirements.txt  –  pip fallback / CI install
+# Primary install method: conda env create -f environment.yml
+# ============================================================
+
+# Core scientific
+numpy>=1.24,<2.0
+pandas>=2.0
+scipy>=1.11
+scikit-learn>=1.3
+
+# Single-cell / spatial
+scanpy>=1.9
+squidpy>=1.3
+anndata>=0.10
+
+# Graph neural networks (PyTorch must be installed first)
+torch>=2.1
+torchvision>=0.16
+torch-geometric>=2.4
+torch-scatter>=2.1.2
+torch-sparse>=0.6.18
+torch-cluster>=1.6.3
+
+# Foundation-model helpers
+transformers>=4.38
+timm>=0.9
+
+# Graph / UMAP
+networkx>=3.1
+umap-learn>=0.5.5
+leidenalg>=0.10
+python-igraph>=0.11
+
+# Visualisation
+matplotlib>=3.7
+seaborn>=0.13
+
+# Config & utilities
+pyyaml>=6.0
+python-dotenv>=1.0
+rich>=13.0
+tqdm>=4.65
+
+# Dev
+black>=24.0
+isort>=5.13
+mypy>=1.8
+jupyterlab>=4.0
+ipywidgets>=8.0
